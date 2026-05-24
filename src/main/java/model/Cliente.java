@@ -28,4 +28,7 @@ public class Cliente {
 	@Column(name = "ruc")
 	private String ruc;
 	
+	public String toString() {
+		return razonSocial;
+	}
 }

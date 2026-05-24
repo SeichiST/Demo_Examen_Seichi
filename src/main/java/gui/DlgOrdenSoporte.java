@@ -196,7 +196,8 @@ public class DlgOrdenSoporte extends JDialog implements ActionListener {
 
 		habilitarEntradas(false);
 		habilitarBotones(true);
-		cargarComboBoxActividad();
+		cargarTecnicos();
+		cargarClientes();
 	}
 
 	public void actionPerformed(ActionEvent arg0) {
@@ -269,10 +270,38 @@ public class DlgOrdenSoporte extends JDialog implements ActionListener {
 		txtNroOrdenSoporte.requestFocus();
 	}
 
-	void cargarComboBoxActividad() {
-
+	void cargarTecnicos() {
+		EntityManager manager = JPAUtil.getEntityManager();
+		String jpql = "select T from Tecnico T";
+		
+		try {
+			List<Tecnico> lstTecnicos = manager.createQuery(jpql, Tecnico.class).getResultList();
+			
+			for (Tecnico tecnico : lstTecnicos) {
+				cboTecnicos.addItem(tecnico);
+			}
+			
+		} finally {
+			manager.close();
+		}
 	}
 
+	void cargarClientes() {
+		EntityManager manager = JPAUtil.getEntityManager();
+		String jpql = "select C from Cliente C";
+		
+		try {
+			List<Cliente> lstCliente = manager.createQuery(jpql, Cliente.class).getResultList();
+			
+			for (Cliente cliente : lstCliente) {
+				cboClientes.addItem(cliente);
+			}
+			
+		} finally {
+			manager.close();
+		}
+	}
+	
 	void listar() {
 		EntityManager manager = JPAUtil.getEntityManager();
 		String jpql = "select O from OrdenSoporte O";
@@ -288,7 +317,7 @@ public class DlgOrdenSoporte extends JDialog implements ActionListener {
 				imprimir("Fecha de registro.....: " + ordenSoporte.getFechaRegistro());
 				imprimir("Tecnico...............: " + tecnico.getNombre() + " especialista en " + tecnico.getEspecilidadDescripcion());
 				imprimir("Cliente...............: " + cliente.getRuc() + " - " + cliente.getRazonSocial());
-				imprimir("Monto.................: " + ordenSoporte.getMonto());
+				imprimir("Monto.................: " + "£." + ordenSoporte.getMonto());
 				imprimir("Detalle de incidencia.: " + ordenSoporte.getDetalleIncidencia());
 				imprimir("¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾¾\n");
 			}
@@ -298,7 +327,28 @@ public class DlgOrdenSoporte extends JDialog implements ActionListener {
 	}
 
 	void adicionar() {
+		String detalleIncidencia = txtDetalleIncidencia.getText();
+		Tecnico tecnico = (Tecnico) cboTecnicos.getSelectedItem();
+		Cliente cliente = (Cliente) cboClientes.getSelectedItem();
+		Double monto = Double.parseDouble(txtMonto.getText());
 		
+		EntityManager manager = JPAUtil.getEntityManager();
+		
+		try {
+			OrdenSoporte ordenSoporte = new OrdenSoporte(null, null, tecnico, cliente, monto, detalleIncidencia);
+			manager.getTransaction().begin();
+			manager.persist(ordenSoporte);
+			manager.getTransaction().commit();
+			
+			mensajeInfo("Orden de soporte registrada");
+			limpiar();
+			
+		} catch (Exception e) {
+			mensajeError("ERROR");
+			e.printStackTrace();
+		} finally {
+			manager.close();
+		}
 	}
 
 	void consultar() {

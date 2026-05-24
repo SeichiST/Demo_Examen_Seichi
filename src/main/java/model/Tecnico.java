@@ -40,7 +40,10 @@ public class Tecnico {
 			return "Base de Datos";
 		default:
 			return "No trabaja";
-
 		}
+	}
+
+	public String toString() {
+		return nombre;
 	}
 }
