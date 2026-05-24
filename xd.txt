@@ -1,0 +1,14 @@
+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
+
+Configurar pom.xml
+src/main/resources
+crear carpeta META-INF
+persistence.xml
+configurar persistence(Base de datos)
+Click der a la carpeta --> Team -->  Share project
+check use or create --> seleccionar la carpeta --> createrepository
+.gitignore en la carpeta del proyecto
+Team --> Commit --> actualizar y seleccionar
+Push --> next --> Branch cambiar a main
+crear en src/main/java
+gui, model y util
